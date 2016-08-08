@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <h3>Pages</h3>
+  <hr>
+  <ul class="list-unstyled">
+    {% for page in pages %}
+    <li>
+        <p><a href="{{page.urlTitle}}">{{page.title}}</a></p>
+    </li>
+
+
+    {% endfor %}
+    <!-- PLACEHOLDER LIST OF PAGES -->
+  </ul>
+{% endblock %}
