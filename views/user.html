@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1>{{user.name}}</h1>
+<h2>{{user.email}}</h2>
+
+<ul class="list-unstyled">
+{% for page in pages %}
+    <li>
+        <p><a href="{{page.urlTitle}}">{{page.title}}</a></p>
+    </li>
+{% endfor %}
+<!-- PLACEHOLDER LIST OF PAGES -->
+</ul>
+
+{% endblock %}

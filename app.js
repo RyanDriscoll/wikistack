@@ -5,6 +5,7 @@ var morgan = require('morgan');
 var bodyparser = require('body-parser');
 var models = require('./models')
 var wikiRouter = require('./routes/wiki');
+var userRouter = require('./routes/user')
 
 swig.setDefaults({cache: false});
 app.engine('html', swig.renderFile);
@@ -16,6 +17,7 @@ app.use(express.static('public'));
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded( { extended: false }));
 app.use('/wiki', wikiRouter);
+app.use('/user', userRouter);
 
 app.get('/', function(req, res){
     res.send('<h1>THIS IS THE ROOT, NOT THE WIKI INDEX</h1>');
@@ -23,9 +25,9 @@ app.get('/', function(req, res){
 
 
 
-models.User.sync({})
+models.User.sync()
     .then(function () {
-        return models.Page.sync({})
+        return models.Page.sync()
     })
     .then(function () {
         app.listen(5432, function () {

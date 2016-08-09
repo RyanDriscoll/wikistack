@@ -26,7 +26,6 @@ var Page = db.define('page', {
 }, {
     hooks: {
         beforeValidate: function(page, options) {
-            console.log("in the validation hook", page, options);
             page.urlTitle = generateUrlTitle(page.title);
             return page.urlTitle;
         }
@@ -58,6 +57,8 @@ function generateUrlTitle (title) {
         return Math.random().toString(36).substring(2, 7);
   }
 }
+
+Page.belongsTo(User, { as: 'author' });
 
 
 module.exports = {

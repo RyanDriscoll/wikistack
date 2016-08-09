@@ -6,24 +6,44 @@ var User = models.User;
 
 router.get('/', function(req, res) {
     Page.findAll()
-    .then(function(pagesReturned) {
-        console.log(pagesReturned)
-        res.render('index', {pages: pagesReturned});
-    })
+        .then(function(pagesReturned) {
+            res.render('index', {
+                pages: pagesReturned
+            });
+        })
 });
 
 
 router.post('/', function(req, res) {
     var pageInfo = req.body;
-    var page = Page.build( {
-        title: pageInfo.title,
-        content: pageInfo.content
-    })
+    var user;
+    User.findOrCreate({
+            where: {
+                email: pageInfo.email
+            },
+            defaults: {
+                name: pageInfo.name,
+                email: pageInfo.email
+            }
+        })
+        .spread(function(user, created) {
+            return Page.create({
+                title: pageInfo.title,
+                content: pageInfo.content,
+            })
+            .then(function(page) {
 
-    page.save().then(function(pageSaved){
-        console.log("pagesaved", pageSaved.urlTitle);
-        res.redirect(pageSaved.urlTitle);
-    });
+                return page.setAuthor(user)
+            })
+            .then(function(updatedPage) {
+                res.redirect(updatedPage.urlTitle);
+            })
+        })
+        .catch(next)
+
+    // .then(function(page) {
+    //     page.setAuthor(user);
+    // });
 });
 
 router.get('/add', function(req, res) {
@@ -33,18 +53,21 @@ router.get('/add', function(req, res) {
 router.get('/:urlTitle', function(req, res, next) {
     var url = req.params.urlTitle;
     Page.findOne({
-        where: {
-            urlTitle: url
-        }
-    })
-    .then(function(page) {
-        res.render('wikipage', {page: page});
-    })
-    .catch(next);
+            where: {
+                urlTitle: url
+            },
+            include: [
+                {model: User, as: 'author'}
+            ]
+        })
+        .then(function(page) {
+            res.render('wikipage', {
+                page: page
+            });
+        })
+        .catch(next);
     // res.send(req.params.urlTitle);
 })
-
-
 
 
 
